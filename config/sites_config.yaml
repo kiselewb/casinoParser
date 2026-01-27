@@ -1,0 +1,67 @@
+sites:
+  - name: "Pinco"
+    id: "pinco"
+    enabled: true
+    auth:
+      site_url: "https://www.pinco02e.win/ru"
+      login_selector: "button.pu-header__login"
+      username_selector: "input#login"
+      password_selector: "input#password"
+      submit_selector: "button[data-testid='loginBtn']"
+      success_indicator: "pu-balance-widget"
+
+    topup:
+      cashbox_selector: ".pu-header__wallet"
+      success_indicator: "pu-cashbox-dialog"
+      invalid_methods: ["Vouwallet", "Piastrix RU", "USDT Tron 0xProcessing", "Tron 0xProcessing"]
+      screenshot_selector: "pu-payments-list"
+
+    credentials:
+      username: "${SITE1_USERNAME}"
+      password: "${SITE1_PASSWORD}"
+
+
+  - name: "Martin"
+    id: "martin"
+    enabled: true
+    auth:
+      site_url: "https://casinomartin44.com/"
+      login_selector: "button#user-top__login-link"
+      username_selector: "input#email"
+      password_selector: "input#password"
+      submit_selector: "button[data-test='auth-form-btn']"
+      success_indicator: ".user-top__auth"
+
+    topup:
+      cashbox_selector: "button[data-test='main_deposit']"
+      success_indicator: "div[data-test='payment_providers_list']"
+      valid_methods: ["sber_list", "sbp_list", "bank_card_list"]
+      screenshot_selector: ".payment__payment-providers-list"
+
+    credentials:
+      username: "${SITE2_USERNAME}"
+      password: "${SITE2_PASSWORD}"
+
+
+  - name: "OnX"
+    id: "onx"
+    enabled: true
+    auth:
+      site_url: "https://74on-x.casino/ru/#popup-login"
+      login_selector: "form[data-test='login_form']"
+      username_selector: "input[data-test='input_email']"
+      password_selector: "input[data-test='input_password']"
+      submit_selector: "button[data-test='submit_button']"
+      success_indicator: ".headerElementBox___Qi31k"
+
+    topup:
+      cookies_selector: ".infoMessageCookieBtn___xQJnw"
+      cashbox_selector: ".tapBarLinkCentered___eL2Wm"
+      success_indicator: ".Popup__banner"
+      button_selector: ".Pressable__close--banner"
+      valid_methods: ["pay_p2p_sb", "pay_p2p_tb", "pay_p2p_vb", "sqp_phone_p2p"]
+      screenshot_selector: ".PayMethods__container"
+
+    credentials:
+      username: "${SITE3_USERNAME}"
+      password: "${SITE3_PASSWORD}"
