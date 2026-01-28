@@ -21,12 +21,21 @@ class ParserManager:
     async def parse_all_sites(self):
         self.logger.info("Starting parse cycle")
 
-        tasks = []
+        # tasks = []
+        # for site_config in self.sites_config:
+        #     if site_config.get('enabled', True):
+        #         tasks.append(self.parse_site(site_config))
+        #
+        # results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        results = []
         for site_config in self.sites_config:
             if site_config.get('enabled', True):
-                tasks.append(self.parse_site(site_config))
-
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+                try:
+                    result = await self.parse_site(site_config)
+                    results.append(result)
+                except Exception as e:
+                    results.append(e)
 
         self.logger.info(f"Parse cycle completed. Results: {len(results)}")
         return results

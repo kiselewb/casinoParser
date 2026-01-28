@@ -10,8 +10,7 @@ class Site2Parser(BaseParser):
         topup_config = self.config['topup']
 
         async with page.expect_response(
-            lambda response: response.url == f"{self.config['auth']["site_url"]}api/v4/cashbox/payment_methods",
-            timeout=15000
+            lambda response: response.url == f"{self.config['auth']["site_url"]}api/v4/cashbox/payment_methods"
         ) as response_info:
             await page.click(topup_config["cashbox_selector"])
 

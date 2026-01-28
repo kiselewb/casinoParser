@@ -14,6 +14,8 @@ class Site1Parser(BaseParser):
         async with page.expect_response(
             lambda response: 'cashbox/deposit/methods' in response.url
         ) as response_info:
+            await page.reload()
+            await page.click(topup_config['cashbox_selector'])
             response = await response_info.value
 
         data = await response.json()

@@ -3,7 +3,7 @@ sites:
     id: "pinco"
     enabled: true
     auth:
-      site_url: "https://www.pinco02e.win/ru"
+      site_url: "https://www.pinco91z.win/ru"
       login_selector: "button.pu-header__login"
       username_selector: "input#login"
       password_selector: "input#password"
