@@ -2,7 +2,8 @@ import os
 from pathlib import Path
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
-from aiogram.types import FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
+from aiogram.types import FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto, ReplyKeyboardMarkup, \
+    KeyboardButton
 from database.db_manager import DBManager
 import logging
 import pytz
@@ -20,14 +21,16 @@ class ParserBot:
         self.logger = logging.getLogger("bot")
 
         self.dp.message(Command("start"))(self.cmd_start)
+        self.dp.message(F.text == "📊 Получить данные")(self.get_message_data)
         self.dp.callback_query(F.data == "get_data")(self.get_data)
         self.dp.callback_query(F.data.startswith("show_screenshot:"))(self.show_screenshot)
         self.dp.callback_query(F.data.startswith("hide_screenshot:"))(self.hide_screenshot)
 
     async def cmd_start(self, message: types.Message):
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="📊 Получить данные", callback_data="get_data")]
-        ])
+        # keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        #     [InlineKeyboardButton(text="📊 Получить данные", callback_data="get_data")]
+        # ])
+        keyboard = self._create_get_data_keyborad()
 
         await message.answer(
             "👋 Привет! Я бот для мониторинга данных о пополнении сайтов.\n\n"
@@ -35,7 +38,7 @@ class ParserBot:
             reply_markup=keyboard
         )
 
-    async def get_data(self, callback: types.CallbackQuery):
+    async def get_data(self, callback: types.CallbackQuery | None):
         await callback.answer("⏳ Загружаю данные...")
 
         results = await self.db.get_latest_results()
@@ -48,6 +51,20 @@ class ParserBot:
 
         for result in results:
             await self.send_site_data(callback.message, result)
+
+    async def get_message_data(self, message: types.Message):
+        await message.answer("⏳ Загружаю данные...")
+
+        results = await self.db.get_latest_results()
+
+        if not results:
+            await message.answer(
+                "⚠️ Нет доступных данных.\nПарсер еще не запускался или все сайты недоступны."
+            )
+            return
+
+        for result in results:
+            await self.send_site_data(message, result)
 
     async def send_site_data(self, message: types.Message, result: dict):
         text = self._format_result_text(result)
@@ -142,6 +159,15 @@ class ParserBot:
                 callback_data=f"hide_screenshot:{site_id}"
             )]
         ])
+
+    def _create_get_data_keyborad(self):
+        return ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="📊 Получить данные")]
+            ],
+            is_persistent=True,
+            resize_keyboard=True
+        )
 
     async def start_polling(self):
         self.logger.info("🤖 Bot started polling")
