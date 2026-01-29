@@ -55,7 +55,6 @@ class BaseParser(ABC):
             except Exception as e:
                 parse_time = (datetime.now(UTC) - start_time).total_seconds()
 
-                # Детальное логирование ошибки
                 self.logger.error(f"❌ Parse failed for {self.config['name']} after {parse_time:.2f}s")
                 self.logger.error(f"❌ Error type: {type(e).__name__}")
                 self.logger.error(f"❌ Error message: {str(e)}")
@@ -66,7 +65,7 @@ class BaseParser(ABC):
                     await page.screenshot(path=f"screenshots/{error_screenshot}")
                     self.logger.info(f"📸 Error screenshot saved: {error_screenshot}")
                 except:
-                    pass
+                    raise
 
                 return {
                     'site_id': self.config['id'],
@@ -96,16 +95,13 @@ class BaseParser(ABC):
 
     @abstractmethod
     async def navigate_to_topup(self, page):
-        """Переход к разделу пополнения (может отличаться на разных сайтах)"""
         pass
 
     @abstractmethod
     async def parse_topup_data(self, page) -> dict:
-        """Парсинг данных о пополнении (специфично для каждого сайта)"""
         pass
 
     async def take_screenshot(self, page) -> str:
-        """Создание скриншота"""
         topup_config = self.config['topup']
 
         filepath = self.screenshot_manager.get_screenshot_path(self.config['id'])
