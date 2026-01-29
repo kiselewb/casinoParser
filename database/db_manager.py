@@ -26,7 +26,7 @@ class DBManager:
                     update(ParseResult)
                     .where(and_(
                         ParseResult.site_id == site_id,
-                        ParseResult.is_latest == True
+                        ParseResult.is_latest
                     ))
                     .values(is_latest=False)
                 )
@@ -61,7 +61,7 @@ class DBManager:
                 ParseResult.site_url,
                 ParseResult.parsed_at,
                 ParseResult.screenshot_path
-            ).where(ParseResult.is_latest == True)
+            ).where(ParseResult.is_latest)
             result = await session.execute(query)
 
             return result.mappings().all()
@@ -76,7 +76,7 @@ class DBManager:
                 ParseResult.parsed_at,
                 ParseResult.screenshot_path
             ).where(and_(
-                ParseResult.is_latest == True,
+                ParseResult.is_latest,
                 ParseResult.site_id == site_id,
             ))
             result = await session.execute(query)

@@ -1,4 +1,6 @@
-import asyncio, logging, aiohttp
+import asyncio
+import aiohttp
+import logging
 from config.settings import CAPMONSTER_KEY, CAPMONSTER_URL_CREATE, CAPMONSTER_URL_RESULT
 
 

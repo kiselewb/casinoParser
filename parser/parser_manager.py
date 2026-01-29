@@ -1,4 +1,3 @@
-import asyncio
 from parser.parsers.site1_parser import Site1Parser
 from parser.parsers.site2_parser import Site2Parser
 from parser.parsers.site3_parser import Site3Parser

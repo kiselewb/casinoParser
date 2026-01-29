@@ -1,5 +1,6 @@
-import asyncio, random, logging
-
+import asyncio
+import random
+import logging
 from playwright.async_api import async_playwright
 from abc import ABC, abstractmethod
 from datetime import datetime, UTC
@@ -35,7 +36,7 @@ class BaseParser(ABC):
                 self.logger.info(f"✅ Authenticated on {self.config['name']}")
 
                 await self.navigate_to_topup(page)
-                self.logger.info(f"✅ Navigated to topup page")
+                self.logger.info("✅ Navigated to topup page")
 
                 data = await self.parse_topup_data(page)
                 self.logger.info(f"✅ Parsed {len(data.get('payment_methods', []))} payment methods")
