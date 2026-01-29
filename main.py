@@ -35,7 +35,7 @@ async def main():
 
         # Создание парсер менеджера
         parser_manager = ParserManager(config['sites'])
-        # await parser_manager.parse_all_sites()
+        await parser_manager.parse_all_sites()
 
         # Запуск планировщика
         scheduler = ParserScheduler(

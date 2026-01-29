@@ -3,23 +3,24 @@ from parser.base_parser import BaseParser
 
 class Site1Parser(BaseParser):
     async def navigate_to_topup(self, page):
-        topup_config = self.config['topup']
-        await page.click(topup_config['cashbox_selector'])
+        pass
+        # topup_config = self.config['topup']
+        # await page.click(topup_config['cashbox_selector'])
 
     async def parse_topup_data(self, page) -> dict:
         topup_config = self.config['topup']
 
-        await page.wait_for_selector(topup_config['success_indicator'])
+        # await page.wait_for_selector(topup_config['success_indicator'])
 
-        async with page.expect_response(
-            lambda response: 'cashbox/deposit/methods' in response.url
-        ) as response_info:
-            await page.reload()
+        async with page.expect_request(
+            lambda req: 'cashbox/deposit/methods' in req.url
+        ) as request_info:
             await page.click(topup_config['cashbox_selector'])
-            response = await response_info.value
+
+        request = await request_info.value
+        response = await request.response()
 
         data = await response.json()
-
         methods = data.get('methods')
 
         payment_methods = []

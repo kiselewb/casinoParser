@@ -19,11 +19,11 @@ class ParserScheduler:
             replace_existing=True
         )
 
-        self.scheduler.add_job(
-            self.parser_manager.parse_all_sites,
-            'date',
-            id='parse_sites_initial'
-        )
+        # self.scheduler.add_job(
+        #     self.parser_manager.parse_all_sites,
+        #     'date',
+        #     id='parse_sites_initial'
+        # )
 
         self.scheduler.start()
         self.logger.info(f"Scheduler started. Interval: {self.interval_hours} hour(s)")
