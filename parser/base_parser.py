@@ -18,10 +18,7 @@ class BaseParser(ABC):
         start_time = datetime.now(UTC)
 
         async with async_playwright() as p:
-            browser = await p.chromium.launch(
-                headless=HEADLESS_MODE,
-                args=BROWSER_ARGS
-            )
+            browser = await p.chromium.launch(headless=HEADLESS_MODE, args=BROWSER_ARGS)
 
             context = await browser.new_context(**CONTEXT_PARAMS)
 
@@ -39,24 +36,30 @@ class BaseParser(ABC):
                 self.logger.info("✅ Navigated to topup page")
 
                 data = await self.parse_topup_data(page)
-                self.logger.info(f"✅ Parsed {len(data.get('payment_methods', []))} payment methods")
+                self.logger.info(
+                    f"✅ Parsed {len(data.get('payment_methods', []))} payment methods"
+                )
 
                 screenshot_path = await self.take_screenshot(page)
-                data['screenshot_path'] = screenshot_path
+                data["screenshot_path"] = screenshot_path
 
-                data['status'] = 'success'
-                data['parsed_at'] = datetime.now(UTC)
-                data['site_url'] = self.config['auth']['site_url']
+                data["status"] = "success"
+                data["parsed_at"] = datetime.now(UTC)
+                data["site_url"] = self.config["auth"]["site_url"]
 
                 parse_time = (datetime.now(UTC) - start_time).total_seconds()
-                self.logger.info(f"✅ Parse completed in {parse_time:.2f}s for {self.config['name']}")
+                self.logger.info(
+                    f"✅ Parse completed in {parse_time:.2f}s for {self.config['name']}"
+                )
 
                 return data
 
             except Exception as e:
                 parse_time = (datetime.now(UTC) - start_time).total_seconds()
 
-                self.logger.error(f"❌ Parse failed for {self.config['name']} after {parse_time:.2f}s")
+                self.logger.error(
+                    f"❌ Parse failed for {self.config['name']} after {parse_time:.2f}s"
+                )
                 self.logger.error(f"❌ Error type: {type(e).__name__}")
                 self.logger.error(f"❌ Error message: {str(e)}")
                 self.logger.exception("Full traceback:")
@@ -69,30 +72,34 @@ class BaseParser(ABC):
                     raise
 
                 return {
-                    'site_id': self.config['id'],
-                    'status': 'error',
-                    'error_message': f"{type(e).__name__}: {str(e)}",
-                    'parsed_at': datetime.now(UTC)
+                    "site_id": self.config["id"],
+                    "status": "error",
+                    "error_message": f"{type(e).__name__}: {str(e)}",
+                    "parsed_at": datetime.now(UTC),
                 }
 
             finally:
                 await browser.close()
 
     async def authenticate(self, page):
-        auth = self.config['auth']
+        auth = self.config["auth"]
 
-        await page.goto(auth['site_url'], wait_until="domcontentloaded")
+        await page.goto(auth["site_url"], wait_until="domcontentloaded")
 
-        await page.wait_for_selector(auth['login_selector'])
+        await page.wait_for_selector(auth["login_selector"])
 
-        await page.click(auth['login_selector'])
+        await page.click(auth["login_selector"])
 
-        await self._human_like_type(page, auth['username_selector'], self.config['credentials']['username'])
-        await self._human_like_type(page, auth['password_selector'], self.config['credentials']['password'])
+        await self._human_like_type(
+            page, auth["username_selector"], self.config["credentials"]["username"]
+        )
+        await self._human_like_type(
+            page, auth["password_selector"], self.config["credentials"]["password"]
+        )
 
-        await page.click(auth['submit_selector'])
+        await page.click(auth["submit_selector"])
 
-        await page.wait_for_selector(auth['success_indicator'])
+        await page.wait_for_selector(auth["success_indicator"])
 
     @abstractmethod
     async def navigate_to_topup(self, page):
@@ -103,10 +110,10 @@ class BaseParser(ABC):
         pass
 
     async def take_screenshot(self, page) -> str:
-        topup_config = self.config['topup']
+        topup_config = self.config["topup"]
 
-        filepath = self.screenshot_manager.get_screenshot_path(self.config['id'])
-        element = page.locator(topup_config['screenshot_selector'])
+        filepath = self.screenshot_manager.get_screenshot_path(self.config["id"])
+        element = page.locator(topup_config["screenshot_selector"])
         await asyncio.sleep(1)
         await element.screenshot(path=filepath)
         self.logger.info(f"Screenshot saved: {filepath}")

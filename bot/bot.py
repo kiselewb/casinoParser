@@ -2,8 +2,14 @@ import os
 from pathlib import Path
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
-from aiogram.types import FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto, ReplyKeyboardMarkup, \
-    KeyboardButton
+from aiogram.types import (
+    FSInputFile,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    InputMediaPhoto,
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+)
 from database.db_manager import DBManager
 import logging
 import pytz
@@ -23,8 +29,12 @@ class ParserBot:
         self.dp.message(Command("start"))(self.cmd_start)
         self.dp.message(F.text == "📊 Получить данные")(self.get_message_data)
         self.dp.callback_query(F.data == "get_data")(self.get_data)
-        self.dp.callback_query(F.data.startswith("show_screenshot:"))(self.show_screenshot)
-        self.dp.callback_query(F.data.startswith("hide_screenshot:"))(self.hide_screenshot)
+        self.dp.callback_query(F.data.startswith("show_screenshot:"))(
+            self.show_screenshot
+        )
+        self.dp.callback_query(F.data.startswith("hide_screenshot:"))(
+            self.hide_screenshot
+        )
 
     async def cmd_start(self, message: types.Message):
         # keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -35,7 +45,7 @@ class ParserBot:
         await message.answer(
             "👋 Привет! Я бот для мониторинга данных о пополнении сайтов.\n\n"
             "Нажми кнопку ниже, чтобы получить актуальные данные.",
-            reply_markup=keyboard
+            reply_markup=keyboard,
         )
 
     async def get_data(self, callback: types.CallbackQuery | None):
@@ -68,14 +78,14 @@ class ParserBot:
 
     async def send_site_data(self, message: types.Message, result: dict):
         text = self._format_result_text(result)
-        site_id= result.get("site_id")
+        site_id = result.get("site_id")
         keyboard = self._create_show_screenshot_keyboard(site_id)
 
         await message.answer(
             text,
             parse_mode="HTML",
             reply_markup=keyboard,
-            disable_web_page_preview=True
+            disable_web_page_preview=True,
         )
 
     async def show_screenshot(self, callback: types.CallbackQuery):
@@ -96,8 +106,7 @@ class ParserBot:
 
             await callback.message.edit_media(
                 media=InputMediaPhoto(
-                    media=FSInputFile(screenshot_path),
-                    parse_mode="HTML"
+                    media=FSInputFile(screenshot_path), parse_mode="HTML"
                 ),
                 reply_markup=keyboard,
             )
@@ -127,14 +136,18 @@ class ParserBot:
             await callback.answer("❌ Ошибка", show_alert=True)
 
     def _format_result_text(self, result: dict) -> str:
-        site_name = result['site_id'].capitalize()
-        site_url = result['site_url']
-        parsed_at = result['parsed_at'].astimezone(pytz.timezone('Europe/Moscow')).strftime('%H:%M')
+        site_name = result["site_id"].capitalize()
+        site_url = result["site_url"]
+        parsed_at = (
+            result["parsed_at"]
+            .astimezone(pytz.timezone("Europe/Moscow"))
+            .strftime("%H:%M")
+        )
 
         text = f"<b><a href='{site_url}'>{site_name}</a></b> "
         text += f"({parsed_at} МСК)\n"
 
-        payment_methods = result.get('payment_methods', [])
+        payment_methods = result.get("payment_methods", [])
 
         if payment_methods:
             for method in payment_methods:
@@ -145,28 +158,33 @@ class ParserBot:
         return text
 
     def _create_show_screenshot_keyboard(self, site_id: str) -> InlineKeyboardMarkup:
-        return InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(
-                text="📄 Показать подтверждение",
-                callback_data=f"show_screenshot:{site_id}"
-            )]
-        ])
+        return InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="📄 Показать подтверждение",
+                        callback_data=f"show_screenshot:{site_id}",
+                    )
+                ]
+            ]
+        )
 
     def _create_hide_screenshot_keyboard(self, site_id: str) -> InlineKeyboardMarkup:
-        return InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(
-                text="◀️ Назад",
-                callback_data=f"hide_screenshot:{site_id}"
-            )]
-        ])
+        return InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="◀️ Назад", callback_data=f"hide_screenshot:{site_id}"
+                    )
+                ]
+            ]
+        )
 
     def _create_get_data_keyborad(self):
         return ReplyKeyboardMarkup(
-            keyboard=[
-                [KeyboardButton(text="📊 Получить данные")]
-            ],
+            keyboard=[[KeyboardButton(text="📊 Получить данные")]],
             is_persistent=True,
-            resize_keyboard=True
+            resize_keyboard=True,
         )
 
     async def start_polling(self):

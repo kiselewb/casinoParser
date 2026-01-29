@@ -21,7 +21,9 @@ class CaptchaManager:
             return None
 
     async def check_captcha(self, page):
-        is_captcha = await page.evaluate("() => Boolean(window.turnstile || window._cf_chl_opt)")
+        is_captcha = await page.evaluate(
+            "() => Boolean(window.turnstile || window._cf_chl_opt)"
+        )
 
         if is_captcha:
             self.logger.info("⛔ Cloudflare Captcha detected")
@@ -36,8 +38,8 @@ class CaptchaManager:
 
         request_data = await request.value
         response = await request_data.response()
-        response_data, = await response.json()
-        captcha_id = response_data.get('data').get('reCaptcha').get('captchaId')
+        (response_data,) = await response.json()
+        captcha_id = response_data.get("data").get("reCaptcha").get("captchaId")
 
         return captcha_id
 
@@ -56,7 +58,7 @@ class CaptchaManager:
         else:
             raise RuntimeError(response_data)
 
-    async def _get_task_result(self, task_id, timeout = 120) -> str:
+    async def _get_task_result(self, task_id, timeout=120) -> str:
         loop = asyncio.get_running_loop()
         start = loop.time()
 
@@ -66,11 +68,8 @@ class CaptchaManager:
                     raise TimeoutError("Captcha solve timeout")
 
                 async with session.post(
-                        CAPMONSTER_URL_RESULT,
-                        json={
-                            "clientKey": CAPMONSTER_KEY,
-                            "taskId": task_id
-                        }
+                    CAPMONSTER_URL_RESULT,
+                    json={"clientKey": CAPMONSTER_KEY, "taskId": task_id},
                 ) as response:
                     data = await response.json(content_type=None)
 
@@ -82,11 +81,7 @@ class CaptchaManager:
     async def _get_task_data(self, page, sitekey) -> dict:
         page_url = page.url
 
-        return {
-            "type": "TurnstileTask",
-            "websiteURL": page_url,
-            "websiteKey": sitekey
-        }
+        return {"type": "TurnstileTask", "websiteURL": page_url, "websiteKey": sitekey}
 
     def _is_captcha_id_request(self, request) -> bool:
         if "api-gateway/graphql" not in request.url:

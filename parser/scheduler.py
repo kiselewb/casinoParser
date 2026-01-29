@@ -13,10 +13,10 @@ class ParserScheduler:
     def start(self):
         self.scheduler.add_job(
             self.parser_manager.parse_all_sites,
-            'interval',
+            "interval",
             hours=self.interval_hours,
-            id='parse_sites',
-            replace_existing=True
+            id="parse_sites",
+            replace_existing=True,
         )
 
         # self.scheduler.add_job(

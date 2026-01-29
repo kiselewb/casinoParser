@@ -20,32 +20,31 @@ class DBManager:
     async def save_parse_result(self, result: dict):
         async with self.async_session() as session:
             try:
-                site_id = result['site_id']
+                site_id = result["site_id"]
 
                 stmt = (
                     update(ParseResult)
-                    .where(and_(
-                        ParseResult.site_id == site_id,
-                        ParseResult.is_latest
-                    ))
+                    .where(and_(ParseResult.site_id == site_id, ParseResult.is_latest))
                     .values(is_latest=False)
                 )
                 await session.execute(stmt)
 
                 parse_result = ParseResult(
                     site_id=site_id,
-                    status=result.get('status'),
-                    payment_methods=result.get('payment_methods'),
-                    site_url=result.get('site_url'),
-                    screenshot_path=result.get('screenshot_path'),
+                    status=result.get("status"),
+                    payment_methods=result.get("payment_methods"),
+                    site_url=result.get("site_url"),
+                    screenshot_path=result.get("screenshot_path"),
                     is_latest=True,
-                    parsed_at=result.get('parsed_at'),
-                    error_message=result.get('error_message'),
+                    parsed_at=result.get("parsed_at"),
+                    error_message=result.get("error_message"),
                 )
                 session.add(parse_result)
                 await session.commit()
 
-                self.logger.info(f"✅ Saved result for {site_id} (ID: {parse_result.id})")
+                self.logger.info(
+                    f"✅ Saved result for {site_id} (ID: {parse_result.id})"
+                )
 
             except Exception as e:
                 await session.rollback()
@@ -60,7 +59,7 @@ class DBManager:
                 ParseResult.payment_methods,
                 ParseResult.site_url,
                 ParseResult.parsed_at,
-                ParseResult.screenshot_path
+                ParseResult.screenshot_path,
             ).where(ParseResult.is_latest)
             result = await session.execute(query)
 
@@ -74,11 +73,13 @@ class DBManager:
                 ParseResult.payment_methods,
                 ParseResult.site_url,
                 ParseResult.parsed_at,
-                ParseResult.screenshot_path
-            ).where(and_(
-                ParseResult.is_latest,
-                ParseResult.site_id == site_id,
-            ))
+                ParseResult.screenshot_path,
+            ).where(
+                and_(
+                    ParseResult.is_latest,
+                    ParseResult.site_id == site_id,
+                )
+            )
             result = await session.execute(query)
 
             return result.mappings().one_or_none()

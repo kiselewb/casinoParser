@@ -12,9 +12,9 @@ class ParserManager:
         self.logger = logging.getLogger("parser_manager")
 
         self.parsers_map = {
-            'pinco': Site1Parser,
-            'martin': Site2Parser,
-            'onx': Site3Parser,
+            "pinco": Site1Parser,
+            "martin": Site2Parser,
+            "onx": Site3Parser,
         }
 
     async def parse_all_sites(self):
@@ -29,7 +29,7 @@ class ParserManager:
 
         results = []
         for site_config in self.sites_config:
-            if site_config.get('enabled', True):
+            if site_config.get("enabled", True):
                 try:
                     result = await self.parse_site(site_config)
                     results.append(result)
@@ -40,7 +40,7 @@ class ParserManager:
         return results
 
     async def parse_site(self, site_config: dict):
-        site_id = site_config['id']
+        site_id = site_config["id"]
         self.logger.info(f"Parsing {site_id}")
 
         try:
@@ -58,4 +58,4 @@ class ParserManager:
 
         except Exception as e:
             self.logger.error(f"Error parsing {site_id}: {e}")
-            return {'site_id': site_id, 'status': 'error', 'error_message': str(e)}
+            return {"site_id": site_id, "status": "error", "error_message": str(e)}

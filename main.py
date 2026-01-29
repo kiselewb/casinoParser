@@ -1,10 +1,6 @@
 import asyncio
 import logging
-from config.settings import (
-    setup_logging,
-    load_config,
-    validate_settings
-)
+from config.settings import setup_logging, load_config, validate_settings
 from parser.parser_manager import ParserManager
 from parser.scheduler import ParserScheduler
 from bot.bot import ParserBot
@@ -34,18 +30,18 @@ async def main():
         await db.init_db()
 
         # Создание парсер менеджера
-        parser_manager = ParserManager(config['sites'])
+        parser_manager = ParserManager(config["sites"])
         await parser_manager.parse_all_sites()
 
         # Запуск планировщика
         scheduler = ParserScheduler(
             parser_manager,
-            interval_hours=config['parse_interval_hours'],
+            interval_hours=config["parse_interval_hours"],
         )
         scheduler.start()
 
         # Запуск бота
-        bot = ParserBot(config['telegram_bot_token'])
+        bot = ParserBot(config["telegram_bot_token"])
 
         # logger.info("✅ All components initialized")
         logger.info("🤖 Starting Telegram bot...")
@@ -64,5 +60,5 @@ async def main():
         raise
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
