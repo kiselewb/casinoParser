@@ -170,6 +170,7 @@ class ParserBot:
         )
 
     async def start_polling(self):
+        await self.bot.delete_webhook(drop_pending_updates=True)
         self.logger.info("🤖 Bot started polling")
         await self.dp.start_polling(self.bot)
 
