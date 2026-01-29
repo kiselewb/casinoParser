@@ -8,7 +8,8 @@ class Site3Parser(BaseParser):
 
         await page.goto(auth['site_url'], wait_until="load")
 
-        await page.wait_for_selector(auth['login_selector'], timeout=60000)
+        await page.click(auth['cookies_selector'])
+        await page.click(auth['login_selector'])
         await page.wait_for_timeout(1000)
 
         is_captcha = await CaptchaManager().check_captcha(page)
@@ -21,8 +22,6 @@ class Site3Parser(BaseParser):
             await page.reload(wait_until="commit")
             await page.wait_for_selector(auth['success_indicator'])
         else:
-            await page.click(auth['login_selector'])
-
             await self._human_like_type(page, auth['username_selector'], self.config['credentials']['username'])
             await self._human_like_type(page, auth['password_selector'], self.config['credentials']['password'])
 
@@ -33,7 +32,6 @@ class Site3Parser(BaseParser):
     async def navigate_to_topup(self, page):
         topup_config = self.config['topup']
 
-        await page.click(topup_config['cookies_selector'])
         await page.click(topup_config['cashbox_selector'])
         await page.wait_for_selector(topup_config['success_indicator'])
 

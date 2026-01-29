@@ -47,8 +47,9 @@ sites:
     id: "onx"
     enabled: true
     auth:
-      site_url: "https://74on-x.casino/ru/#popup-login"
-      login_selector: "form[data-test='login_form']"
+      site_url: "https://74on-x.casino/ru/"
+      cookies_selector: ".infoMessageCookieBtn___xQJnw"
+      login_selector: "a.tapBarLinkCentered___eL2Wm"
       username_selector: "input[data-test='input_email']"
       password_selector: "input[data-test='input_password']"
       submit_selector: "button[data-test='submit_button']"
