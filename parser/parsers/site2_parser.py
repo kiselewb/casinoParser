@@ -8,9 +8,10 @@ class Site2Parser(BaseParser):
     async def parse_topup_data(self, page) -> dict:
         topup_config = self.config["topup"]
 
+        site_url = page.url.replace("ru", "")
+
         async with page.expect_response(
-            lambda response: response.url
-            == f"{self.config['auth']['site_url']}api/v4/cashbox/payment_methods"
+            lambda response: response.url == f"{site_url}api/v4/cashbox/payment_methods"
         ) as response_info:
             await page.click(topup_config["cashbox_selector"])
 

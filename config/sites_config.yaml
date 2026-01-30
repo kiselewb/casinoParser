@@ -25,8 +25,8 @@ sites:
     id: "martin"
     enabled: true
     auth:
-      site_url: "https://casinomartin44.com/"
-      login_selector: "button#user-top__login-link"
+      site_url: "https://fortuneadvert.com/martin/?_preview=show&pkey=f73346043c"
+      login_selector: "span.registration-form__login-link"
       username_selector: "input#email"
       password_selector: "input#password"
       submit_selector: "button[data-test='auth-form-btn']"
